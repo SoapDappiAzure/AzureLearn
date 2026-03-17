@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculator</title>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #eef2f7; margin: 0; }
+    .calculator { background: white; border: 1px solid #ccc; padding: 20px; border-radius: 10px; box-shadow: 0 8px 25px rgba(0,0,0,.1); width: 300px; }
+    .calculator input { width: 100%; font-size: 1.5rem; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #ccc; }
+    .calculator button { width: 70px; margin: 3px; height: 50px; font-size: 1.2rem; border-radius: 6px; border: none; background: #4a90e2; color: white; cursor: pointer; }
+    .calculator button.operator { background: #2c3e50; }
+    .calculator button.clear { background: #e74c3c; }
+    .calculator button.equals { background: #27ae60; width: 146px; }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <input type="text" id="display" readonly aria-label="Calculator display" />
+    <div>
+      <button onclick="press('7')">7</button>
+      <button onclick="press('8')">8</button>
+      <button onclick="press('9')">9</button>
+      <button class="operator" onclick="press('/')">÷</button>
+    </div>
+    <div>
+      <button onclick="press('4')">4</button>
+      <button onclick="press('5')">5</button>
+      <button onclick="press('6')">6</button>
+      <button class="operator" onclick="press('*')">×</button>
+    </div>
+    <div>
+      <button onclick="press('1')">1</button>
+      <button onclick="press('2')">2</button>
+      <button onclick="press('3')">3</button>
+      <button class="operator" onclick="press('-')">−</button>
+    </div>
+    <div>
+      <button onclick="press('0')">0</button>
+      <button onclick="press('.')">.</button>
+      <button class="equals" onclick="calculate()">=</button>
+      <button class="operator" onclick="press('+')">+</button>
+    </div>
+    <div>
+      <button class="clear" onclick="clearDisplay()">C</button>
+      <button class="clear" onclick="backspace()">←</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+
+    function press(value) {
+      if (display.value === 'Error') display.value = '';
+      display.value += value;
+    }
+
+    function clearDisplay() {
+      display.value = '';
+    }
+
+    function backspace() {
+      display.value = display.value.slice(0, -1);
+    }
+
+    function calculate() {
+      try {
+        const expression = display.value.replace(/×/g, '*').replace(/÷/g, '/');
+        const result = Function('return ' + expression)();
+        display.value = Number.isFinite(result) ? result : 'Error';
+      } catch (err) {
+        display.value = 'Error';
+      }
+    }
+
+    window.addEventListener('keydown', (event) => {
+      const allowed = '0123456789.+-*/()';
+      if (allowed.includes(event.key)) {
+        press(event.key);
+      } else if (event.key === 'Enter' || event.key === '=') {
+        event.preventDefault();
+        calculate();
+      } else if (event.key === 'Backspace') {
+        backspace();
+      } else if (event.key === 'Escape') {
+        clearDisplay();
+      }
+    });
+  </script>
+</body>
+</html>
